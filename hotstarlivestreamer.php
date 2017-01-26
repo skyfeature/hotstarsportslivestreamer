@@ -14,7 +14,7 @@ if ($last==$testl){
 
 	$collec="http://account.hotstar.com/AVS/besc?action=GetAggregatedContentDetails&channel=PCTV&contentId=$pidc";
 
-	$options  = array('http' => array('user_agent' => 'custom user agent string'));
+	$options  = array('http' => array('proxy' => 'tcp://proxy62.iitd.ernet.in:3128', 'request_fulluri' => true));
 
 	$context  = stream_context_create($options);
 
@@ -125,7 +125,7 @@ else{
 
 	$json="http://getcdn.hotstar.com/AVS/besc?action=GetCDN&asJson=Y&channel=TABLET&id=$pid&type=VOD";
                                  
-	$options  = array('http' => array('user_agent' => 'custom user agent string'));
+	$options  = array('http' => array('proxy' => 'tcp://proxy62.iitd.ernet.in:3128', 'request_fulluri' => true));
 
 	$context  = stream_context_create($options);
 
