@@ -14,7 +14,7 @@ run hotstarlivestreamer.sh or starsportslivesreamer.sh in terminal
 
 and follow the instructions
 
-by default the videos are downloaded in videos/
+by default the videos are downloaded in $pwd/videos/
 
 
 
@@ -36,6 +36,6 @@ double clic on hotstarlivestreamer.bat or starsportslivesreamer.bat
 
 and follow the instructions
 
-by default the videos are downloaded in videos/
+by default the videos are downloaded in $pwd/videos/
 
 NOTA: if you want change hotstarlivestreamer.bat or starsportslivesreamer.bat use notepad++
