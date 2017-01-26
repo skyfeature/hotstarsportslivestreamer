@@ -1,6 +1,9 @@
 <?php
 
-$options  = array('http' => array('user_agent' => 'custom user agent string'));
+//if no proxy is used
+// $options  = array('http' => array('user_agent' => 'custom user agent string'));
+//if using proxy
+$options  = array('http' => array('proxy' => 'tcp://proxy62.iitd.ernet.in:3128', 'request_fulluri' => true));
 
 $context  = stream_context_create($options);
 
