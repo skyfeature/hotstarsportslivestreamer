@@ -13,8 +13,10 @@ if ($last==$testl){
 	$pidc=str_replace("-","",$argv[1]);
 
 	$collec="http://account.hotstar.com/AVS/besc?action=GetAggregatedContentDetails&channel=PCTV&contentId=$pidc";
-
-	$options  = array('http' => array('user_agent' => 'custom user agent string'));
+	//if no proxy is used
+// 	$options  = array('http' => array('user_agent' => 'custom user agent string'));
+	//if using proxy
+	$options  = array('http' => array('proxy' => 'tcp://proxy62.iitd.ernet.in:3128', 'request_fulluri' => true));
 
 	$context  = stream_context_create($options);
 
@@ -124,9 +126,11 @@ else{
 	$title="http://account.hotstar.com/AVS/besc?action=GetAggregatedContentDetails&channel=PCTV&contentId=$pid";
 
 	$json="http://getcdn.hotstar.com/AVS/besc?action=GetCDN&asJson=Y&channel=TABLET&id=$pid&type=VOD";
-                                 
-	$options  = array('http' => array('user_agent' => 'custom user agent string'));
-
+        //if no proxy is used
+// 	$options  = array('http' => array('user_agent' => 'custom user agent string'));
+	//if using iitd proxy
+	$options  = array('http' => array('proxy' => 'tcp://proxy62.iitd.ernet.in:3128', 'request_fulluri' => true));
+	
 	$context  = stream_context_create($options);
 
 	$show = file_get_contents($title, false, $context);
