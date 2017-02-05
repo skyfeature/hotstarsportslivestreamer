@@ -1,7 +1,13 @@
 <?php
 
-$last=substr($argv[1], -1);
+$ppid= strrpos($argv[1], '#');
 
+$http_proxy = substr($argv[1], $ppid+8);
+
+$argv[1] = substr($argv[1], 0, $ppid);
+// echo "$http_proxy\n";
+
+$last=substr($argv[1], -1);
 $testl="c";
 
 if ($last==$testl){
@@ -13,10 +19,13 @@ if ($last==$testl){
 	$pidc=str_replace("-","",$argv[1]);
 
 	$collec="http://account.hotstar.com/AVS/besc?action=GetAggregatedContentDetails&channel=PCTV&contentId=$pidc";
-	//if no proxy is used
-// 	$options  = array('http' => array('user_agent' => 'custom user agent string'));
-	//if using proxy
-	$options  = array('http' => array('proxy' => 'tcp://proxy62.iitd.ernet.in:3128', 'request_fulluri' => true));
+
+	if ($http_proxy) {
+		$options  = array('http' => array('proxy' => 'tcp://'.$http_proxy, 'request_fulluri' => true));
+	}
+	else{
+		$options  = array('http' => array('user_agent' => 'custom user agent string'));
+	}
 
 	$context  = stream_context_create($options);
 
@@ -74,10 +83,10 @@ if ($last==$testl){
 
 		if($testhttps){  
 			$m3u8p=str_replace("https","hlsvariant://https",$hls);
-			} 
-			else{ 
+		} 
+		else{ 
 			$m3u8p=str_replace("http","hlsvariant://http",$hls);
-			}
+		}
 		
 		$m3u8=str_replace("2000,_STAR.","2000,3000,4500,_STAR.",$m3u8p);
 		
@@ -91,24 +100,23 @@ if ($last==$testl){
 		$bitrate= substr($quality, $beginq , $endrq); $bitrate=str_replace(","," ",$bitrate);
 
 		if(isset($argv[3])){
-			}
-			else{
-			echo "Available streams: $bitrate\n";
-			}
 
+		}
+		else{
+			echo "Available streams: $bitrate\n";
+		}
 	}
 	else{
-	foreach($contentList as $r){
-	echo "Id:".$r->contentId." "."episodeTitle:".$r->episodeTitle." "."contentTitle:".$r->contentTitle."\n";
-	}
+		foreach($contentList as $r){
+		echo "Id:".$r->contentId." "."episodeTitle:".$r->episodeTitle." "."contentTitle:".$r->contentTitle."\n";
+		}
 	}
 	if(isset($argv[3]) AND isset($argv[2])){
-
 		echo "Starting livestreamer...\n\n";
 		echo shell_exec("$argv[5]livestreamer  \"$m3u8\" \"$argv[3]\" -o \"$argv[4]$filename.ts\" &");
 		echo "Done.\n";
-		}
-		else{ 
+	}
+	else{ 
 		}
 
 }
@@ -117,20 +125,21 @@ else{
 	$folder = ""; 
 
 	$ppid= strrpos($argv[1], '/');
-
 	$id = substr($argv[1], $ppid);
-
 	$pid=str_replace("/","",$id);
 	$pid = substr($pid, -10);
 	
 	$title="http://account.hotstar.com/AVS/besc?action=GetAggregatedContentDetails&channel=PCTV&contentId=$pid";
 
 	$json="http://getcdn.hotstar.com/AVS/besc?action=GetCDN&asJson=Y&channel=TABLET&id=$pid&type=VOD";
-        //if no proxy is used
-// 	$options  = array('http' => array('user_agent' => 'custom user agent string'));
-	//if using iitd proxy
-	$options  = array('http' => array('proxy' => 'tcp://proxy62.iitd.ernet.in:3128', 'request_fulluri' => true));
-	
+
+	if ($http_proxy) {
+		$options  = array('http' => array('proxy' => 'tcp://'.$http_proxy, 'request_fulluri' => true));
+	}
+	else{
+		$options  = array('http' => array('user_agent' => 'custom user agent string'));
+	}
+
 	$context  = stream_context_create($options);
 
 	$show = file_get_contents($title, false, $context);
@@ -162,55 +171,45 @@ else{
 	$testhttps=strpos($hls, 'https');
 
 	if($testhttps){  
-		$m3u8p=str_replace("https","hlsvariant://https",$hls);
-		
-		} 
-		else{ 
+		$m3u8p=str_replace("https","hlsvariant://https",$hls);		
+	} 
+	else{ 
 		$m3u8p=str_replace("http","hlsvariant://http",$hls);
-		}
+	}
 	$testhttps2=strpos($m3u8p, 'https');
 	if($testhttps2){  
 		$m3u8=str_replace("2000,_STAR.","2000,3000,4500,_STAR.",$m3u8p);
-		
-		} 
-		else{ 
+	} 
+	else{ 
 		$m3u8=str_replace("2000,_STAR.","2000,_STAR.",$m3u8p);
-		}
-
-
-
+	}
 	
 	$badformat = array("4500","3000","2000","1300","800","400","180","106","54","16");
 
 	$googformat = array("1080p", "900p","720p","404p","360p","234p","","","","");
 
 	$quality = str_replace($badformat, $googformat, $m3u8);
-				
-	$endq= strrpos($quality, ',');  $beginq= strpos($quality, ','); $endrq = $endq - $beginq ; 
+	$endq= strrpos($quality, ',');  
+	$beginq= strpos($quality, ','); 
+	$endrq = $endq - $beginq ; 
 	$bitrate= substr($quality, $beginq , $endrq);
-
 	$bitrate=str_replace(","," ",$bitrate);
 
 	
 	if(isset($argv[2])){
 		if(isset($argv[2]) AND ($argv[5]=='d')){
-	
-
-		echo "Starting livestreamer...\n\n";
-		echo shell_exec("$argv[4]livestreamer  \"$m3u8\" \"$argv[2]\" -o \"$argv[3]$filename.ts\" &");
-		echo "Done.\n";
+			echo "Starting livestreamer...\n\n";
+			echo shell_exec("$argv[4]livestreamer  \"$m3u8\" \"$argv[2]\" -o \"$argv[3]$filename.ts\" &");
+			echo "Done.\n";
 		}
 		else{ 
-		echo "Starting livestreamer...\n\n";
-		echo shell_exec("$argv[4]livestreamer  \"$m3u8\" \"$argv[2]\"  &");
-		echo "Done.\n";
+			echo "Starting livestreamer...\n\n";
+			echo shell_exec("$argv[4]livestreamer  \"$m3u8\" \"$argv[2]\"  &");
+			echo "Done.\n";
 		}
-		}
-		else{ echo "Available streams: $bitrate\n";
-		}
-
-	
-	
+	}
+	else{ 
+		echo "Available streams: $bitrate\n";
+	}	
 }
-
 ?>
