@@ -1,6 +1,17 @@
 #/bin/bash
 echo "paste the link"
 read link
+
+#if url has "/watch" or "/" in the end then remove them.
+if [[ "$link" == */watch ]]
+then
+	link=${link%??????}
+elif [[ "$link" == */ ]]
+then
+	link=${link%?}
+fi
+
+
 last=${link: -1}
 folder=$PWD/videos/
 livestreamer=""
